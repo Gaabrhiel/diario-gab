@@ -1,0 +1,48 @@
+name: CI/CD do Portfólio Pessoal
+
+# O pipeline será executado em push ou pull request nas branches main e development
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release
+
+jobs:
+  validate_code:
+    # Rodar no sistema operacional Ubuntu (padrão)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout do Código
+        # Ação oficial para baixar o código do repositório
+        uses: actions/checkout@v4
+
+      # -- VALIDAÇÃO BÁSICA DO PROJETO ESTÁTICO --
+
+      - name: Configurar Node.js (necessário para Linters)
+        # Embora o projeto não use Node.js para rodar, usaremos ferramentas baseadas em Node para validar
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências de Lint (Exemplo: HTML Hint)
+        # Instalação de um linter leve para verificação de sintaxe de HTML
+        run: npm install -g htmlhint
+
+      - name: Executar Validação de HTML (HTMLHint)
+        # O HTMLHint verifica se o HTML está bem formatado e sintaticamente correto
+        run: htmlhint index.html
+
+      # Nota: Para CSS/JS, você pode adicionar outras ferramentas como stylelint ou eslint.
+      # Para este projeto simples, a validação de HTML e o sucesso do build do Vercel já cobrem o essencial.
+
+      # -- FIM DO CI: DEIXAR O CD COM O VERCEL --
+      
+      - name: Confirmação do Sucesso do CI
+        run: echo "Integração Contínua (CI) concluída com sucesso. O Vercel continuará com o Deploy (CD)."
